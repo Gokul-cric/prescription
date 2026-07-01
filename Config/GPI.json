@@ -1,0 +1,229 @@
+{
+
+"Group_opt":
+        {
+        "group_all":{"activeClay":8.07,
+"compactibility":38.73,
+"gcs":26.15,
+"gfnAfs" : 55.31,
+"loi":3.79,
+"moisture":3.38,
+"permeability":150.75
+        },
+        "group_1":{"activeClay":8.15,
+"compactibility":38.78,
+"gcs":26.21,
+"gfnAfs" : 55.07,
+"loi":3.81,
+"moisture":3.4,
+"permeability":152.23
+        },
+        "group_2":{"activeClay":8.32,"compactibility":39.09,"gcs":2140.1,"gfnAfs":64.18,"inertFines":2.92,"loi":5.39,"moisture":3.31,"permeability":96.16,"shearStrength":545.12,"splitStrength":501.12,"tempOfSandAfterMix":39.27,"volatileMatter":2.94
+        }
+},
+
+
+
+
+"batch_size":4800,
+
+"filter":{
+
+"group_all":{
+
+"bentonite_kg":[13.01,27.51],"fresh silica sand_kg":[8.01,20.01],"water_kg":[81.11,130.11]
+},
+"group_1":{
+
+"bentonite_kg":[13.01,27.51],"fresh silica sand_kg":[0,18.01],"water_kg":[81.11,130.11]
+},
+"group_2":{
+
+"bentonite_kg":[54.76,73.61],"fresh silica sand_kg":[61.76,84.11],"lca_kg":[24.02,30.26],"water_kg":[62.88,84.64]
+}
+},
+
+
+
+"additive_to_adjust":{
+
+"group_all":["bentonite","fresh silica sand"],
+"group_1":["bentonite"],
+"group_2":["bentonite","fresh silica sand"]
+
+
+},
+
+
+"Adjustment":{
+
+
+"group_all":{"bentonite":{"param":["activeClay","gcs","loi"],
+                              
+                               "ref_coeff":[0.5,5.8, -21],
+                              
+                               "weight":[0.4,1.5, 0.3],
+                               
+                               "prediction_bound":{"min":12,"max":27},
+                               
+                                "offset":0},
+
+                  
+                  "fresh silica sand":{"param":["gfnAfs","permeability"],
+                            
+                             "ref_coeff":[-7,20],
+                            
+                             "weight":[0.5,0.5],
+                             
+                             "prediction_bound":{"min":12,"max":18},
+                             
+                             "offset":1.8}
+                     },
+"group_1":{"bentonite":{"param":["activeClay","gcs","loi","moisture"],
+                              
+                               "ref_coeff":[0.7,0.7,0.02, -0.03],
+                              
+                               "weight":[0.1,0.7,0.1, 0.1],
+                               
+                               "prediction_bound":{"min":13,"max":27},
+                               
+                                "offset":-3},
+
+                  
+                  "fresh silica sand":{"param":["gfnAfs","permeability"],
+                            
+                             "ref_coeff":[-7,20],
+                            
+                             "weight":[0.5,0.5],
+                             
+                             "prediction_bound":{"min":12,"max":18},
+                             
+                             "offset":1}
+                     },
+"group_2":{"bentonite":{"param":["activeClay","gcs","loi","moisture"],
+                              
+                               "ref_coeff":[0.3,0.5,0.2, -0.003],
+                              
+                               "weight":[0.17,0.65,0.08, 0.1],
+                               
+                               "prediction_bound":{"min":12,"max":25},
+                               
+                                "offset":-2},
+
+                  
+                  "fresh silica sand":{"param":["gfnAfs","permeability"],
+                            
+                             "ref_coeff":[-9999,9999],
+                            
+                             "weight":[0.5,0.5],
+                             
+                             "prediction_bound":{"min":12,"max":18},
+                             
+                             "offset":-0.5}
+                     }
+
+        },
+"date_range" : ["2025-01-09", "2025-05-29"],
+"group_name":"group_2",
+  "columns_to_rename": {
+    "bentonite_frac": "bentonite",
+    "fresh silica sand_frac": "freshSilicaSand",
+    "lca_frac": "lca",
+    "return sand_frac": "returnSand",
+    "water_frac": "water",
+    "sand_metal_ratio": "S/M",
+    "core_sand_ratio": "C/S",
+    "core_metal_ratio": "C/M",
+    "date":"Date",
+    "shift":"Shift"
+},
+"additives_list":["bentonite_frac", "fresh silica sand_frac", "lca_frac", "water_frac"],
+"ratio_list" :["sand_metal_ratio", "core_sand_ratio", "core_metal_ratio"],
+"date_shift":["date","shift"],
+"pred_list" :[
+  "bentonite_predicted_kg",
+  "fresh silica sand_predicted_kg",
+  "lca_predicted_kg",
+  "return sand_predicted_kg",
+  "water_predicted_kg"
+], 
+"columns_to_mean":[
+"activeClay", "compactibility", "gcs", "gfnAfs", "inertFines", "loi", "moisture", "permeability", 
+"tempOfSandAfterMix", "volatileMatter", "wetTensileStrength", "sand_metal_ratio", "core_sand_ratio", 
+"core_metal_ratio", "bentonite_frac", "fresh silica sand_frac", "lca_frac", "return sand_frac", "water_frac"
+    ],
+
+"uncertainity_parameter" : {
+        "bentonite":["gcs","gfnAfs","splitStrength"],  
+        "fresh silica sand":[]
+},
+
+"real_time_runner_model_no" : 35,
+
+"ps_data_column_rename" : {"Active Clay (%)":"activeClay",
+"Compactability (%)":"compactibility",
+"GCS (gm/cm2)":"gcs",
+"GFN/AFS (no)":"gfnAfs",
+"LOI (%)":"loi",
+"Moisture (%)":"moisture",
+"Permeability (no)":"permeability",
+"Split Strength (gm/cm2)":"splitStrength",
+"Shear Strength (gm/cm2)":"shearStrength",
+"Inert Fines (%)":"inertFines",
+"Temp. of Sand after mix.(C)":"tempOfSandAfterMix",
+"Volatile Matter (%)":"volatileMatter",
+"Date":"date",
+"Shift" : "shift",
+"Core Influx Sand (MT)":"csi",
+"Total Prepared Sand (MT)":"tps",
+"Total Liquid Metal Poured (MT)":"tlm"  
+},
+"cons_data_column_rename" : {
+     "Date":"date",
+"Shift":"shift",
+"New Sand (lbs)":"fss",
+"Core Sand (lbs)":"csi",
+"Total Prepared Sand (lbs)":"tps",
+"Total Liquid Metal Poured (lbs)":"tlm"
+   
+},
+
+"props_column":["activeClay","compactibility","gcs","gfnAfs","inertFines","loi","moisture","permeability","shearStrength","splitStrength","tempOfSandAfterMix","volatileMatter"],
+
+"shift_time" : {
+        "Shift_08": ["15:10:00", "08:00:00"],
+         
+        "Shift_09": ["16:10:00", "09:00:00"],
+        "Shift_14_1": ["04:00:00", "14:00:00"],
+        "Shift_25_1": ["15:00:00", "02:00:00"],
+        "Shift_10": ["17:10:00", "10:00:00"],
+        "Shift_11": ["18:10:00", "11:00:00"],
+        "Shift_12": ["19:10:00", "12:00:00"],
+        "Shift_13": ["20:10:00", "13:00:00"],
+        "Shift_14": ["00:10:00", "14:00:00"],
+        "Shift_15": ["04:00:00", "15:00:00"],
+
+        "Shift_19": ["08:05:00", "19:05:00"],
+        "Shift_20": ["09:05:00", "20:05:00"],
+        "Shift_21": ["10:05:00", "21:05:00"],
+        "Shift_22": ["11:05:00", "22:05:00"],
+        "Shift_23": ["12:05:00", "23:05:00"],
+        "Shift_24": ["13:05:00", "00:05:00"],
+        "Shift_25": ["14:05:00", "01:05:00"],
+        "Shift_26": ["15:00:00", "03:59:59"]
+              },
+
+"ps_columns":[["Date", "Time","Shift", "Active Clay (%)", "Compactability (%)", "GCS (gm/cm2)",
+ "GFN/AFS (no)", "Inert Fines (%)", "LOI (%)", "Moisture (%)",
+ "Permeability (no)", "Temp. of Sand after mix.(C)", "Volatile Matter (%)",
+ "Split Strength (gm/cm2)", "Shear Strength (gm/cm2)"]
+],
+"comp_columns":[["Component ID", "Core Weight (Kg)", "Types of Cores", 
+ "Core Sand Dilution/Return to System (Kg)", 
+ "Core Sand Lost (%)"]],
+  "core_influx":"Core Sand Dilution/Return to System (Kg)"
+
+      
+}
+
+

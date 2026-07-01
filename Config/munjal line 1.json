@@ -1,0 +1,143 @@
+{
+
+"Group_opt":
+{
+
+"group_low":{"activeClay": 8.7,"compactibility":35.35,"gcs":1.64, "gfnAfs":66.35, "inertFines": 1.95,
+"loi":2.7,"moisture":2.58,"permeability":121.68,
+"tempOfSandAfterMix":42.07,"volatileMatter":2.3, "wetTensileStrength":12.2
+},
+
+"group_high":{"activeClay": 8.72,"compactibility":35.44,"gcs":1.64,"gfnAfs":66.37, "inertFines": 1.96,
+"loi":2.71,"moisture":2.57,"permeability":121.01,
+"tempOfSandAfterMix":41.94,"volatileMatter":2.29, "wetTensileStrength":12.44
+
+}
+
+},
+
+"batch_size":2400,
+
+"filter":{
+
+"group_low":{
+
+"bentonite_kg":[15.99,18.01],"lca_kg":[3.49,4.01],"fresh silica sand_kg":[14.99,18.01],"water_kg":[39,58]
+},
+
+"group_high":{
+
+"bentonite_kg":[20.9,24.01],"lca_kg":[3.49,4.1],"fresh silica sand_kg":[14.99,18.01],"water_kg":[39,58]
+}
+
+},
+
+
+"additive_to_adjust":{
+
+"group_low":["bentonite", "lca", "fresh silica sand"],
+"group_high":["bentonite", "lca", "fresh silica sand"]
+
+},
+
+
+"Adjustment":{
+
+
+"group_low":{"bentonite":{"param":["activeClay","gcs"],
+                              
+                               "ref_coeff":[0.4,0.25],
+                              
+                               "weight":[0.4,0.6],
+                               
+                               "prediction_bound":{"min":15.5,"max":16.8},
+                               
+                                "offset":-0.4},
+                              
+                  "lca":{"param":["loi"],
+                    
+                            "ref_coeff":[0.5],
+                        
+                             "weight":[1],
+                             
+                             "prediction_bound":{"min":3.3,"max":4},
+                             
+                              "offset":0.25},
+                  
+                  "fresh silica sand":{"param":["inertFines"],
+                            
+                             "ref_coeff":[-0.1],
+                            
+                             "weight":[1],
+                             
+                             "prediction_bound":{"min":15,"max":16.5},
+                             
+                             "offset":1.8}
+
+},
+
+"group_high":{"bentonite":{"param":["activeClay","gcs"],
+                              
+                        "ref_coeff":[0.36,0.15],
+
+                        "weight":[0.4,0.6],
+
+                        "prediction_bound":{"min":21,"max":22.5},
+
+                        "offset":-0.3},
+
+
+                "lca":{"param":["loi"],
+
+                        "ref_coeff":[0.35],
+
+                        "weight":[1],
+
+                        "prediction_bound":{"min":3.3,"max":4},
+
+                        "offset":0.25},
+
+                "fresh silica sand":{"param":["inertFines"],
+
+                        "ref_coeff":[-0.3],
+
+                        "weight":[1],
+
+                        "prediction_bound":{"min":15,"max":16.5},
+
+                        "offset":-0.75}
+
+}
+},
+
+"date_range" : ["2022-11-01", "2023-06-06"],
+
+"group_name":"group_low",
+  "columns_to_rename": {
+    "bentonite_frac": "bentonite",
+    "fresh silica sand_frac": "freshSilicaSand",
+    "lca_frac": "lca",
+    "return sand_frac": "returnSand",
+    "water_frac": "water",
+    "sand_metal_ratio": "S/M",
+    "core_sand_ratio": "C/S",
+    "core_metal_ratio": "C/M",
+    "date":"Date",
+    "shift":"Shift"
+},
+"additives_list":["bentonite_frac","fresh silica sand_frac","lca_frac","water_frac"],
+"ratio_list" :["sand_metal_ratio", "core_sand_ratio", "core_metal_ratio"],
+"date_shift":["date","shift"],
+"pred_list" :[
+  "bentonite_predicted_kg",
+  "fresh silica sand_predicted_kg",
+  "lca_predicted_kg",
+  "return sand_predicted_kg",
+  "water_predicted_kg"
+],
+"columns_to_mean":[
+"activeClay", "compactibility", "gcs", "gfnAfs", "inertFines", "loi", "moisture", "permeability", 
+"tempOfSandAfterMix", "volatileMatter", "wetTensileStrength", "sand_metal_ratio", "core_sand_ratio", 
+"core_metal_ratio", "bentonite_frac", "fresh silica sand_frac", "lca_frac", "return sand_frac", "water_frac"
+    ]
+}
