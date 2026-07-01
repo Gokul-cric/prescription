@@ -398,8 +398,12 @@ SMR                       :  {results['smr']}
     </body></html>
     """
     msg = MIMEMultipart("related")
-    msg["From"]    = "gokulramesh033@gmail.com"
-    msg["To"]      = "gokul@mpminfosoft.com"
+    SENDER       = os.environ.get("EMAIL_SENDER",   "gokulramesh033@gmail.com")
+    APP_PASSWORD = os.environ.get("EMAIL_PASSWORD", "kisesrobrlsjrkds")
+    RECIPIENT    = os.environ.get("EMAIL_RECIPIENT","gokul@mpminfosoft.com")
+
+    msg["From"]    = SENDER
+    msg["To"]      = RECIPIENT
     msg["Subject"] = "Prescription"
     msg.attach(MIMEText(html, "html"))
     img_mime = MIMEImage(img_data)
@@ -407,9 +411,12 @@ SMR                       :  {results['smr']}
     img_mime.add_header("Content-Disposition", "inline")
     msg.attach(img_mime)
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login("gokulramesh033@gmail.com", "kisesrobrlsjrkds")
-        server.sendmail("gokulramesh033@gmail.com", "gokul@mpminfosoft.com", msg.as_string())
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as server:
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(SENDER, APP_PASSWORD)
+        server.sendmail(SENDER, RECIPIENT, msg.as_string())
 
 
 # ── Flask app ─────────────────────────────────────────────────────────────────
@@ -479,7 +486,7 @@ UPLOAD_HTML = """
           <tr><td style="padding:7px 10px;font-weight:bold;color:#555;">{{ group_display }} Bentonite Pred</td><td style="padding:7px 10px;text-align:right;color:#333;">{{ results.finalPrediction }}</td></tr>
           <tr style="background:#fff8f0;"><td colspan="2" style="padding:7px 10px;font-weight:bold;color:#555;">{{ new_sand_line }}</td></tr>
         </table>
-        <p class="success">Email sent to gokul@mpminfosoft.com</p>
+        <p class="success">{{ email_status }}</p>
       </div>
     {% endif %}
   </div>
@@ -496,7 +503,7 @@ def index():
 
     if request.method == "GET":
         return render_template_string(UPLOAD_HTML, results=None, error=None,
-                                      n=n, group_display=group_display, new_sand_line=new_sand_line)
+                                      n=n, group_display=group_display, new_sand_line=new_sand_line, email_status="")
 
     # Save uploaded files
     try:
@@ -512,7 +519,7 @@ def index():
                 return render_template_string(UPLOAD_HTML, results=None,
                                               error=f"Missing file: {field}",
                                               n=n, group_display=group_display,
-                                              new_sand_line=new_sand_line)
+                                              new_sand_line=new_sand_line, email_status="")
             dest = os.path.join(data_dir, f.filename)
             f.save(dest)
             saved[field] = dest
@@ -538,16 +545,21 @@ def index():
         # Step 4 — generate image and send email
         image_path = os.path.join(analysis_dir, "prescription_output.png")
         save_prescription_image(results, image_path)
-        send_email(image_path, results)
+        email_status = "Email sent to gokul@mpminfosoft.com"
+        try:
+            send_email(image_path, results)
+        except Exception as mail_err:
+            email_status = f"Email failed: {mail_err}"
 
         return render_template_string(UPLOAD_HTML, results=results, error=None,
                                       n=n, group_display=group_display,
-                                      new_sand_line=new_sand_line)
+                                      new_sand_line=new_sand_line,
+                                      email_status=email_status)
 
     except Exception as e:
         return render_template_string(UPLOAD_HTML, results=None, error=str(e),
                                       n=n, group_display=group_display,
-                                      new_sand_line=new_sand_line)
+                                      new_sand_line=new_sand_line, email_status="")
 
 
 SETTINGS_HTML = """
