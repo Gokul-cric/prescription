@@ -385,10 +385,11 @@ def send_email(image_path, results):
 
     import base64
     import resend
+    from resend.emails._attachment import Attachment
 
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
-    _s        = load_settings()
-    SENDER    = _s.get("email_sender", os.environ.get("EMAIL_SENDER", "onboarding@resend.dev"))
+    _s         = load_settings()
+    SENDER     = _s.get("email_sender", os.environ.get("EMAIL_SENDER", "onboarding@resend.dev"))
     RECIPIENTS = _s.get("email_recipients", [os.environ.get("EMAIL_RECIPIENT", "")])
 
     with open(image_path, "rb") as f:
@@ -397,7 +398,7 @@ def send_email(image_path, results):
 
     html = f"""
     <html><body>
-      <img src="data:image/png;base64,{img_b64}" style="display:block;max-width:100%;"><br>
+      <img src="cid:prescription.png" style="display:block;max-width:100%;"><br>
       <table style="font-family:monospace;font-size:13px;border-collapse:collapse;">
         <tr><td style="padding:4px 12px;">Last {n} Boxes Total CSI</td><td style="padding:4px 12px;"><b>{results['csi']}</b></td></tr>
         <tr><td style="padding:4px 12px;">SMR</td><td style="padding:4px 12px;"><b>{results['smr']}</b></td></tr>
@@ -408,10 +409,15 @@ def send_email(image_path, results):
     """
 
     resend.Emails.send({
-        "from":    SENDER,
-        "to":      RECIPIENTS,
-        "subject": "Prescription",
-        "html":    html,
+        "from":        SENDER,
+        "to":          RECIPIENTS,
+        "subject":     "Prescription",
+        "html":        html,
+        "attachments": [{
+            "filename":    "prescription.png",
+            "content":     img_b64,
+            "content_id":  "prescription.png",
+        }],
     })
 
 
