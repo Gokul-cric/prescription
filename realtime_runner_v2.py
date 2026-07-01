@@ -545,9 +545,9 @@ def send_prescription_email(image_path, results, boxes, group_name, newsand):
     from email.mime.text import MIMEText
     from email.mime.image import MIMEImage
 
-    SENDER       = "gokulramesh033@gmail.com"
-    APP_PASSWORD = "kisesrobrlsjrkds"
-    RECIPIENT    = "gokul@mpminfosoft.com"
+    SENDER       = os.environ.get("EMAIL_SENDER",   "gokulramesh033@gmail.com")
+    APP_PASSWORD = os.environ.get("EMAIL_PASSWORD", "kisesrobrlsjrkds")
+    RECIPIENT    = os.environ.get("EMAIL_RECIPIENT","gokul@mpminfosoft.com")
     SUBJECT      = "Prescription"
 
     group_display  = group_name.replace("_", " ").title()
@@ -582,7 +582,10 @@ SMR                           :  {_fmt(results.get('smr'))}
     msg.attach(img_mime)
 
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as server:
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
             server.login(SENDER, APP_PASSWORD)
             server.sendmail(SENDER, RECIPIENT, msg.as_string())
         print(f"Prescription email sent to {RECIPIENT}")
