@@ -383,40 +383,35 @@ def send_email(image_path, results):
     new_sand_val   = round(((newsand - 52) * 8.4) / 70, 2)
     new_sand_line  = f"New Sand = (({newsand} - 52) * 8.4) / 70 = {new_sand_val}"
 
+    import base64
+    import resend
+
+    resend.api_key = os.environ.get("RESEND_API_KEY", "")
+    SENDER    = os.environ.get("EMAIL_SENDER",    "onboarding@resend.dev")
+    RECIPIENT = os.environ.get("EMAIL_RECIPIENT", "gokul@mpminfosoft.com")
+
     with open(image_path, "rb") as f:
         img_data = f.read()
+    img_b64 = base64.b64encode(img_data).decode()
 
     html = f"""
     <html><body>
-      <img src="cid:prescription_img" style="display:block;"><br>
-      <pre style="font-family:monospace;font-size:13px;">
-Last {n} Boxes Total CSI  :  {results['csi']}
-SMR                       :  {results['smr']}
-{group_display} Bentonite Pred :  {results['finalPrediction']}
-{new_sand_line}
-      </pre>
+      <img src="data:image/png;base64,{img_b64}" style="display:block;max-width:100%;"><br>
+      <table style="font-family:monospace;font-size:13px;border-collapse:collapse;">
+        <tr><td style="padding:4px 12px;">Last {n} Boxes Total CSI</td><td style="padding:4px 12px;"><b>{results['csi']}</b></td></tr>
+        <tr><td style="padding:4px 12px;">SMR</td><td style="padding:4px 12px;"><b>{results['smr']}</b></td></tr>
+        <tr><td style="padding:4px 12px;">{group_display} Bentonite Pred</td><td style="padding:4px 12px;"><b>{results['finalPrediction']}</b></td></tr>
+        <tr><td colspan="2" style="padding:4px 12px;">{new_sand_line}</td></tr>
+      </table>
     </body></html>
     """
-    msg = MIMEMultipart("related")
-    SENDER       = os.environ.get("EMAIL_SENDER",   "gokulramesh033@gmail.com")
-    APP_PASSWORD = os.environ.get("EMAIL_PASSWORD", "kisesrobrlsjrkds")
-    RECIPIENT    = os.environ.get("EMAIL_RECIPIENT","gokul@mpminfosoft.com")
 
-    msg["From"]    = SENDER
-    msg["To"]      = RECIPIENT
-    msg["Subject"] = "Prescription"
-    msg.attach(MIMEText(html, "html"))
-    img_mime = MIMEImage(img_data)
-    img_mime.add_header("Content-ID", "<prescription_img>")
-    img_mime.add_header("Content-Disposition", "inline")
-    msg.attach(img_mime)
-
-    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as server:
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
-        server.login(SENDER, APP_PASSWORD)
-        server.sendmail(SENDER, RECIPIENT, msg.as_string())
+    resend.Emails.send({
+        "from":    SENDER,
+        "to":      RECIPIENT,
+        "subject": "Prescription",
+        "html":    html,
+    })
 
 
 # ── Flask app ─────────────────────────────────────────────────────────────────
