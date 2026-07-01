@@ -2,5 +2,7 @@
     "n": 1500,
     "perShift": 450,
     "OFFSET": 7.0,
-    "newsand": 46.0
+    "newsand": 46.0,
+    "email_sender": "onboarding@resend.dev",
+    "email_recipients": []
 }

@@ -387,8 +387,9 @@ def send_email(image_path, results):
     import resend
 
     resend.api_key = os.environ.get("RESEND_API_KEY", "")
-    SENDER    = os.environ.get("EMAIL_SENDER",    "onboarding@resend.dev")
-    RECIPIENT = os.environ.get("EMAIL_RECIPIENT", "gokul@mpminfosoft.com")
+    _s        = load_settings()
+    SENDER    = _s.get("email_sender", os.environ.get("EMAIL_SENDER", "onboarding@resend.dev"))
+    RECIPIENTS = _s.get("email_recipients", [os.environ.get("EMAIL_RECIPIENT", "")])
 
     with open(image_path, "rb") as f:
         img_data = f.read()
@@ -408,7 +409,7 @@ def send_email(image_path, results):
 
     resend.Emails.send({
         "from":    SENDER,
-        "to":      RECIPIENT,
+        "to":      RECIPIENTS,
         "subject": "Prescription",
         "html":    html,
     })
@@ -540,7 +541,7 @@ def index():
         # Step 4 — generate image and send email
         image_path = os.path.join(analysis_dir, "prescription_output.png")
         save_prescription_image(results, image_path)
-        email_status = "Email sent to gokul@mpminfosoft.com"
+        email_status = "Email sent to " + ", ".join(load_settings().get("email_recipients", []))
         try:
             send_email(image_path, results)
         except Exception as mail_err:
@@ -596,6 +597,18 @@ SETTINGS_HTML = """
       <input type="number" name="newsand" value="{{ s.newsand }}" step="0.1" required>
       <p class="hint">Used in formula: ((newsand - 52) * 8.4) / 70</p>
 
+      <hr style="margin:20px 0;border:none;border-top:1px solid #eee;">
+      <h3 style="margin:0 0 8px;color:#333;">Email Settings</h3>
+
+      <label>From (Sender)</label>
+      <input type="email" name="email_sender" value="{{ s.email_sender }}" required>
+      <p class="hint">Use onboarding@resend.dev for testing, or your verified domain email</p>
+
+      <label>Recipients (one per line)</label>
+      <textarea name="email_recipients" rows="4"
+        style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;box-sizing:border-box;">{{ s.email_recipients | join('\n') }}</textarea>
+      <p class="hint">Add any number of email addresses, one per line</p>
+
       <button type="submit">Save Settings</button>
     </form>
     {% if saved %}
@@ -613,11 +626,14 @@ def settings():
     global n, perShift, OFFSET, newsand
     saved = False
     if request.method == "POST":
+        recipients = [r.strip() for r in request.form["email_recipients"].splitlines() if r.strip()]
         new_s = {
-            "n":        int(request.form["n"]),
-            "perShift": int(request.form["perShift"]),
-            "OFFSET":   float(request.form["OFFSET"]),
-            "newsand":  float(request.form["newsand"]),
+            "n":                int(request.form["n"]),
+            "perShift":         int(request.form["perShift"]),
+            "OFFSET":           float(request.form["OFFSET"]),
+            "newsand":          float(request.form["newsand"]),
+            "email_sender":     request.form["email_sender"].strip(),
+            "email_recipients": recipients,
         }
         save_settings(new_s)
         n        = new_s["n"]
