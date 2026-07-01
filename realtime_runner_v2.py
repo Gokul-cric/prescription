@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from preprocess import load_all_configs,read_data,perform_modeling,calculate_correlations,without_bound,dict_conv,save_dict_to_excel,convert_dict,save_dict_to_excel_single_sheet,save_model_info_to_excel
 import pandas as pd
 import json
@@ -545,9 +547,9 @@ def send_prescription_email(image_path, results, boxes, group_name, newsand):
     from email.mime.text import MIMEText
     from email.mime.image import MIMEImage
 
-    SENDER       = os.environ.get("EMAIL_SENDER",   "gokulramesh033@gmail.com")
-    APP_PASSWORD = os.environ.get("EMAIL_PASSWORD", "kisesrobrlsjrkds")
-    RECIPIENT    = os.environ.get("EMAIL_RECIPIENT","gokul@mpminfosoft.com")
+    SENDER       = os.environ.get("EMAIL_SENDER")
+    APP_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+    RECIPIENT    = os.environ.get("EMAIL_RECIPIENT")
     SUBJECT      = "Prescription"
 
     group_display  = group_name.replace("_", " ").title()
@@ -582,10 +584,7 @@ SMR                           :  {_fmt(results.get('smr'))}
     msg.attach(img_mime)
 
     try:
-        with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(SENDER, APP_PASSWORD)
             server.sendmail(SENDER, RECIPIENT, msg.as_string())
         print(f"Prescription email sent to {RECIPIENT}")

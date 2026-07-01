@@ -1,0 +1,18 @@
+# Credentials — never commit these
+.env
+
+# Daily upload files — uploaded via web form each time
+Data/GPI/Preparedsand_*.xlsx
+Data/GPI/Consumption_*.xlsx
+Data/GPI/Consumptionbooking_*.xlsx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Temp files
+*.tmp
+~$*.xlsx

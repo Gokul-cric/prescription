@@ -9,3 +9,4 @@ cvxpy
 cvxopt
 xlsxwriter
 resend
+python-dotenv
