@@ -13,6 +13,10 @@ __pycache__/
 .venv/
 venv/
 
+# Generated output files — change every run
+Analysis/GPI/dummy3.xlsx
+Analysis/GPI/prescription_output.png
+
 # Temp files
 *.tmp
 ~$*.xlsx
