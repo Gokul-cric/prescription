@@ -459,6 +459,9 @@ UPLOAD_HTML = """
       <input type="file" name="consumption" accept=".xlsx" required>
       <label>Consumption Booking File</label>
       <input type="file" name="consumptionbooking" accept=".xlsx" required>
+      <label>Component File</label>
+      <input type="file" name="component" accept=".xlsx">
+      <p class="hint" style="margin-top:2px;font-size:12px;color:#999;">Optional — leave empty to use the existing file on server</p>
       <button type="submit">Generate Prescription</button>
     </form>
 
@@ -529,19 +532,26 @@ def index():
         # Step 1 — merge consumption + booking to add Start/End Time
         process_consumption_file(saved["consumption"], saved["consumptionbooking"])
 
-        # Step 2 — find Component file (static, stays on server)
-        comp_files = glob.glob(os.path.join(data_dir, "Component_*.xlsx"))
-        if not comp_files:
-            return render_template_string(UPLOAD_HTML, results=None,
-                                          error="Component file not found on server.",
-                                          n=n, group_display=group_display,
-                                          new_sand_line=new_sand_line)
+        # Step 2 — Component file: use uploaded one or fall back to server file
+        comp_file = request.files.get("component")
+        if comp_file and comp_file.filename:
+            comp_dest = os.path.join(data_dir, comp_file.filename)
+            comp_file.save(comp_dest)
+            comp_path = comp_dest
+        else:
+            comp_files = glob.glob(os.path.join(data_dir, "Component_*.xlsx"))
+            if not comp_files:
+                return render_template_string(UPLOAD_HTML, results=None,
+                                              error="Component file not found. Please upload it.",
+                                              n=n, group_display=group_display,
+                                              new_sand_line=new_sand_line, email_status="")
+            comp_path = comp_files[0]
 
         # Step 3 — run prescription pipeline
         results = run_prescription(
             ps_path   = saved["preparedsand"],
             cons_path = saved["consumption"],
-            comp_path = comp_files[0],
+            comp_path = comp_path,
         )
 
         # Step 4 — generate image and send email
